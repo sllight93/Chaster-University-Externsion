@@ -4,8 +4,11 @@
   "description": "",
   "main": "server.ts",
   "scripts": {
-    "start": "ts-node server.ts",
-    "seed": "ts-node prisma/seed.ts"
+    "dev-b": "ts-node server.ts",
+    "db-migrate": "npx prisma migrate dev --name dev-migrate",
+    "db-gen": "npx prisma generate",
+    "db-seed": "ts-node prisma/seed.ts",
+    "start": "ts-node server.ts"
   },
   "keywords": [],
   "author": "",
