@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Degree {
+  id            String         @id @default(uuid())
+  name          String         @unique
+  description   String
+  type          String         @default("Bachelor")
+  degreeCourses DegreeCourse[]
+  createdAt     DateTime       @default(now())
+
+  @@map("degrees")
+}
+
+model Course {
+  id            String         @id @default(uuid())
+  name          String         @unique
+  degreeCourses DegreeCourse[]
+  classes       CourseClass[]
+  createdAt     DateTime       @default(now())
+
+  @@map("courses")
+}
+
+model DegreeCourse {
+  degreeId String
+  courseId String
+  degree   Degree @relation(fields: [degreeId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id])
+  
+  @@id([degreeId, courseId])
+  @@map("degree_course")
+}
+
+model Class {
+  id             String     @id @default(uuid())
+  name           String     @unique       // Global eindeutig
+  difficulty     Int
+  // Beziehung zu Courses über die Join-Tabelle CourseClass
+  courses        CourseClass[]
+  tasks          Task[]     @relation("ClassToTask")
+  examTasks      ExamTask[]
+  daysOfWeek     Json
+  pointsRequired Int
+  createdAt      DateTime   @default(now())
+
+  // Selbstbeziehungen für Voraussetzungen
+  prerequisites  ClassPrerequisite[] @relation("PrerequisitesFor")
+  prerequisiteOf ClassPrerequisite[] @relation("PrerequisitesOf")
+
+  @@map("classes")
+}
+
+model CourseClass {
+  courseId String
+  classId  String
+  course   Course @relation(fields: [courseId], references: [id])
+  class    Class  @relation(fields: [classId], references: [id])
+
+  @@id([courseId, classId])
+  @@map("course_class")
+}
+
+model ClassPrerequisite {
+  classId        String @map("class_id")
+  prerequisiteId String @map("prerequisite_id")
+  class          Class  @relation("PrerequisitesFor", fields: [classId], references: [id])
+  prerequisite   Class  @relation("PrerequisitesOf", fields: [prerequisiteId], references: [id])
+  
+  @@id([classId, prerequisiteId])
+  @@map("class_prerequisite")
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  classId     String
+  class       Class    @relation("ClassToTask", fields: [classId], references: [id])
+  description String
+  minDuration Int
+  maxDuration Int
+  points      Int
+  createdAt   DateTime @default(now())
+
+  @@map("tasks")
+}
+
+model ExamTask {
+  id          String   @id @default(uuid())
+  classId     String
+  class       Class    @relation(fields: [classId], references: [id])
+  description String
+  minDuration Int
+  maxDuration Int
+  createdAt   DateTime @default(now())
+
+  @@map("exam_tasks")
+}
+
+model Punishment {
+  id          String   @id @default(uuid())
+  name        String
+  difficulty  String
+  description String
+  minDuration Int
+  maxDuration Int
+  createdAt   DateTime @default(now())
+
+  @@map("punishments")
+}
+
+model Club {
+  id          String   @id @default(uuid())
+  name        String
+  level       String
+  description String
+  modifiers   Json
+  createdAt   DateTime @default(now())
+
+  @@map("clubs")
+}

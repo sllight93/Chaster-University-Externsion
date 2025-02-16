@@ -1,1 +1,2 @@
-# Chaster-University-Externsion
+# csb-su
+chaster-smarthome-bridge: SU-Module

@@ -1,0 +1,158 @@
+Der Datensatz Courses nach dem Schema "name, class_level1, class_level2, class_level3, class_level4":
+
+Milking Technologies,Anal Basics,Prostate Play,Prostate Milking,Prostate Orgasms
+Anal Technologies,Anal Basics,Anal,Ass Play,Deep Anal
+Oral Technologies,Blowjob Basics,Blowjob,Deepthroats,Facefucking
+Enema Technologies,Enema Basics,Enema Play,Advanced Enemas,Big Enemas
+Penetration Technologies,Blowjob Basics,Double Penetration Basics,Double Penetration,Full Penetration
+Penetration Technologies,Anal Basics,Double Penetration Basics,Spitroasting,
+Pleasure Services,Service Basics,Pleasure Service,Pleasure Giving,Full Service
+Gagreflex Research,Facefucking,Gagreflex Training,Facefuck Endurance Statistics,Facefucking Advanced Techniques
+Anal Destruction,Anal stretching,Fisting Basics,Fisting intermediate,Fisting large insertations
+Anal Destruction,Anal stretching,Longterm Buttplug Basics,Extended Plugwearing,Plug Philosophy
+Chastity Psychology,Chastity Basics,Chastity,Longterm Chastity,Permanent Chastity
+Orgasm Denial Psychology,Teasing,Denial,Tease and Denial,Frustration
+Stimulation Science,Sensitivity Basics,Sensitivity Training,Forced Orgasms,Orgasm Torture
+Goon Science,Gooning Basics,Gooning,Gooning Addict,Gooning Enlightment
+Religious Research,Porn Addict,Porn Collection,Compilations,
+Hypno Therapy,Hypno Basics,Subliminal Messages,Hypnosis,Brainwash
+Crossdressing Studies,Girly Underwear,Girly Dressup,Girly Outfits,Crossdressing
+Feminization Studies,Femininity Basics,Femininity,Feminization,Feminine Transformation
+Cum Cuisine,Cum-play Basics,Cum Play,Cum Apreciation,Cum Addiction
+Cumslut Customs,Cum-play Basics,Cum Play,Cum Apreciation,Cum Addiction
+Cumslut Customs,Cum Collecting,Dailie Cum Dose,Cum Worshipping,Cumdump
+Fashion Research,Fashion Basics,Shopping for Underwear & Lingerine,Extended underwear,In Person Lingerine Shopping
+Fashion Research,Fashion Basics,Shopping for Tops,Extended Outfits,In Person Outfit Shopping
+Fashion Research,Fashion Basics,Shopping for Skirts and Leggins,,
+Fashion Research,Fashion Basics,Shopping for Dresses,Occasional Dresses,In Person Outfit Shopping
+Fashion Research,Fashion Basics,Shopping for Shoes and Accesiors,To collect Shoes,In Person Outfit Shopping
+Fashion Research,Fashion Basics,Shopping for Costumes,Basic Costumes,Extended Costumes
+Fashion Research,Fashion Basics,Shopping for Toys,Extraordinary Toys,Big Guns
+Dating Discourse,OK Cupid Obligations,Dating Women,Dating Men,Rent-a-Slut
+Hookup Hotshots,OK Cupid Obligations,Dating Women,Dating Men,Rent-a-Slut
+Hookup Hotshots,OK Cupid Obligations,Slutty Afirmations,Dating Men,Whore Mindset
+Mistress Masterclass,Mistress Research,Introduction to Femdom,Extended Femdom Expiriences,
+Mistress Masterclass,Agreeableness,Obedience,Submission,Slavery
+Submission Training,Agreeableness,Obedience,Submission,Slavery
+Kitten Training,Kitten play Basics,Kitten Play,Kitten Training,Bitch Training
+Fulltime Service,Mistress Research,Introduction to Femdom,Extended Femdom Expiriences,
+Fulltime Service,Mistress Research,Introduction to Femdom,Short-term Submission,Long-term Submission
+Public Relations,Exposure Basics,Hidden Exposure,Public Exposure,Exhibitionism
+Media & Advertising,Media Basics,Media Sharing,Media Management,Media Influencing
+Pain Management,Spanking,Pain,Pain Enjoyment,Painful Pleasure
+Nipple Therapy,Nipple play Basics,Nipple play,Nipple Stimulation,Nipple Pleasure
+Bondage Arts,Gags and Cuffs,Basic Bondage,Self Bondage,Heavy Bondage
+Leather Crafts,Leather Basics,Leather Wear,Leather Outfits,Leather Fashion
+Sounding Mechanics,Sounding Basics,Sounding,Urethra Sounding,Urethra Stretching
+Estim Engineering,Estim Basics,Estim,Estim Advanced,Estim Endurance
+
+Der Datensatz Degrees nach dem schema "name,course1,course2,course3,course4,course5":
+
+Insertion Mechanics,Anal Technologies,Oral Technologies,Penetration Technologies,,
+Pleasure Economics,Anal Technologies,Oral Technologies,Pleasure Services,,
+Oral Sciences,Oral Technologies,Cum Cuisine,,,
+Anal Sciences,Anal Technologies,Enema Technologies,,,
+Sissy Studies,Chastity Psychology,Crossdressing Studies,,,
+Feminization Arts,Crossdressing Studies,Feminization Studies,Hypno Therapy,,
+Gender Studies,Chastity Psychology,Milking Technologies,Crossdressing Studies,Feminization Studies,Hypno Therapy
+Frustration Psychology,Chastity Psychology,Orgasm Denial Psychology,,,
+Orgasm Science,Stimulation Science,,,,
+Pleasure Science,Chastity Psychology,Orgasm Denial Psychology,Nipple Therapy,Milking Technologies,
+BDSM Services,Bondage Arts,Pain Management,Submission Training,,
+Experiment Sciences,Estim Engineering,Sounding Mechanics,,,
+Slave Services,Pleasure Services,Submission Training,,,
+Pet Science,Kitten Training,,,,
+Media & Publicity,Public Relations,Media & Advertising,,,
+
+Hier sind die grundlegenden Schemen für Prisma:
+
+model Degree {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  // Many-to-Many: Ein Degree kann mehrere Courses haben, und ein Course kann in mehreren Degrees vorkommen.
+  courses     Course[]  
+  createdAt   DateTime  @default(now())
+}
+
+model Course {
+  id        String    @id @default(uuid())
+  name      String
+  // Many-to-Many: Ein Course kann in mehreren Degrees vorkommen.
+  degrees   Degree[]
+  classes   Class[]   @relation("CourseToClass")
+  createdAt DateTime  @default(now())
+}
+
+model Class {
+  id             String     @id @default(uuid())
+  name           String
+  courseId       String
+  course         Course     @relation("CourseToClass", fields: [courseId], references: [id])
+  tasks          Task[]     @relation("ClassToTask")
+  examTasks      ExamTask[]
+  daysOfWeek     Json
+  pointsRequired Int
+  createdAt      DateTime   @default(now())
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  classId     String
+  class       Class    @relation("ClassToTask", fields: [classId], references: [id])
+  description String
+  minDuration Int
+  maxDuration Int
+  points      Int
+  createdAt   DateTime @default(now())
+}
+
+model ExamTask {
+  id          String   @id @default(uuid())
+  classId     String
+  class       Class    @relation(fields: [classId], references: [id])
+  description String
+  minDuration Int
+  maxDuration Int
+  createdAt   DateTime @default(now())
+}
+
+model Punishment {
+  id          String   @id @default(uuid())
+  name        String
+  difficulty  String
+  description String
+  minDuration Int
+  maxDuration Int
+  createdAt   DateTime @default(now())
+}
+
+model Club {
+  id          String   @id @default(uuid())
+  name        String
+  level       String
+  description String
+  modifiers   Json
+  createdAt   DateTime @default(now())
+}
+
+
+
+
+
+Das sind die Regeln für das kombinieren der Daten:
+
+- Das ist der CSV Datensatz der Courses. Das schema ist: course_name, class_level1, class_level2, class_level3, class_level4
+- Ein Course kann auch mehreren class_level1, class_level2, class_level3, class_level4 beinhalten. Es müssen nicht immer 4 class_level vohanden sein. Es kann auch bei level2 gestartet, und level3 aufgehört werden.
+- Die Couses sind teil eines Degrees, wobei ein Degree mehrere Courses beinhaltet.
+- Es gibt 2 Typen von Degrees: Bachelor, und Master. Master Degrees haben immer einen oder mehrere Bachelordegrees als vorraussetzung.
+- Ein Bachelor Degree hat keine vorraussetzung. 
+- Derzeit gibt es nur Bachelordegrees, master sind in zukunft geplant.
+- Eine Class hat einen punktewert von maximal 6. Ein Course hat somit anzahl der Classes * 6 punkte. Ein Degree hat die summe der punkte der Courses. 
+- Die Note A für einen Cours gibt es, wenn alle 6 punkte erreicht wurden. B für 5, C für 4 usw.. 
+- Um eine Class zu bestehen, benötigt man mindestens 2 Punkte. Um einen Course zu bestehen, benötigt man in allen Classes mindestens 2 Punkte. Um einen Degree zu bestehen, müssen alle Courses bestanden worden sein. 
+- Tasks müssen Classes zugewiesen werden können
+- ExamTasks müssen Classes, Courses oder Degrees zugeordnet werden können
+- Die struktur der Tasks und ExamTasks wird noch verändert
+- Die Struktur der Clubs und Punishments wird noch verändert
+
