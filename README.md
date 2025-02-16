@@ -1,6 +1,3 @@
-Hier ist eine vollständige Markdown-Dokumentation, die auch Docker Compose zur Einrichtung der Datenbank im Root-Verzeichnis beschreibt. Kopiere diesen Text in deine `README.md`:
-
-```markdown
 # CUE - Chaster-University-Extension
 
 Diese Anwendung ist die Chaster University Extension und besteht aus einem Backend-Server (Express) und einem Frontend-Server (Next.js). Zusätzlich wird PostgreSQL als Datenbank verwendet.
